@@ -10,10 +10,11 @@ export type dashboardType = {
 }
 
 export type faqType = {
+    _id: number;
     question: string
     type: string
     status: string
-    updatedAt: string
+    date: string
 }
 
 export type blogType = {

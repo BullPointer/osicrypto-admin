@@ -135,10 +135,13 @@ const CrudBlog = () => {
         setBlogMessage("Blog published sucessfully!");
         setTimeout(() => {
           setBlogMessage(null);
+          navigate("/admin/blog");
         }, 3000);
       } catch (error: any) {
         setBlogMessage(
-          String(blog.blogImage === null && "Please select an image to publish blog")
+          String(
+            blog.blogImage === null && "Please select an image to publish blog"
+          )
         );
         setTimeout(() => {
           setBlogMessage(null);
@@ -165,12 +168,30 @@ const CrudBlog = () => {
         <Select
           handleChange={handleChange}
           listArr={[
-            "Latest News",
-            "For You",
-            "Price Predictions",
-            "Crypto Updates",
-            "Trending News",
-            "Top Stories",
+            {
+              option: "Latest News",
+              value: "Latest News",
+            },
+            {
+              option: "For You",
+              value: "For You",
+            },
+            {
+              option: "Price Predictions",
+              value: "Price Predictions",
+            },
+            {
+              option: "Crypto Updates",
+              value: "Crypto Updates",
+            },
+            {
+              option: "Trending News",
+              value: "Trending News",
+            },
+            {
+              option: "Top Stories",
+              value: "Top Stories",
+            },
           ]}
           label={"Category"}
           name={"category"}
@@ -203,6 +224,24 @@ const CrudBlog = () => {
         {err?.author && (
           <div className="text-sm text-red-400">{err.author}</div>
         )}
+        {/* <Select
+          handleChange={handleChange}
+          listArr={[
+            {
+              option: "Active",
+              value: true,
+            },
+            {
+              option: "Deactive",
+              value: false,
+            },
+          ]}
+          label={"Activation Status"}
+          name={"status"}
+        />
+        {err?.author && (
+          <div className="text-sm text-red-400">{err.author}</div>
+        )} */}
         <div className="flex flex-col justify-start items-start w-full">
           <label
             className="text-white pt-5 font-semibold font-mono text-xl"

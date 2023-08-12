@@ -1,11 +1,15 @@
 type SelectProps = {
   handleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  listArr: string[];
   label: string;
   name: string;
+  value?: string;
+  listArr: {
+    value: string;
+    option: string;
+  }[];
 };
 
-const Select = ({ handleChange, listArr, label, name }: SelectProps) => {
+const Select = ({ handleChange, listArr, label, name, value }: SelectProps) => {
   return (
     <div className="flex flex-col justify-start items-start">
       <label
@@ -15,17 +19,18 @@ const Select = ({ handleChange, listArr, label, name }: SelectProps) => {
         {label}
       </label>
       <select
+        value={value}
         onChange={handleChange}
         className="outline-none w-[50%] bg-transparent border-b-2 font-bold"
         name={name}
       >
-        {listArr.map((list, index) => (
+        {listArr?.map((list, index) => (
           <option
             key={index}
             className="text-whites font-bold bg-black"
-            value={list}
+            value={list.value}
           >
-            {list}
+            {list.option}
           </option>
         ))}
       </select>

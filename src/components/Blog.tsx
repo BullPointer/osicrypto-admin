@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import dayjs from "dayjs";
 import { BlogDetails } from ".";
 import { getBlogsApi } from "../api/BlogApi";
 import { useAppContext } from "../context/AppContext";
@@ -11,7 +12,15 @@ const Blog = () => {
   const getBlogs = async () => {
     const response = await getBlogsApi();
     if (response.status == 200) {
-      setBlogData(response.data.blogs);
+      setBlogData(
+        response.data.blogs.map((blog: { date: string }) => {
+          const date = new Date(Number(blog.date));
+          return {
+            ...blog,
+            date: dayjs(date.toUTCString()).format("YYYY-MM-DD h:mm A"),
+          };
+        })
+      );
     }
   };
 

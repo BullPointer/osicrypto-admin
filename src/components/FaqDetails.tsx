@@ -3,6 +3,9 @@ import { useState } from "react";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import { faqType } from "./types";
+import { deleteByIdApi } from "../api/FaqApi";
+import { ErrorDisplayPage } from "./ErrorDisplayPage";
+import { ConfirmAction } from "./ConfirmAction";
 
 type ActionType = {
   index: number | null;
@@ -13,12 +16,21 @@ type ActionProps = {
   category: string;
   header: { text: string; width: string }[];
   data: faqType[];
+  confirm: string | null;
+  setConfirm: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
-const Details = ({ category, header, data }: ActionProps) => {
+const Details = ({
+  category,
+  header,
+  data,
+  confirm,
+  setConfirm,
+}: ActionProps) => {
   const navigate = useNavigate();
   const [action, setAction] = useState({} as ActionType);
   const { showSidebar } = useAppContext();
+  const [faqMessage, setFaqMessage] = useState<string | null>(null);
 
   const handleMouseEnter = (index: number, msg: string) => {
     setAction({ ...action, index, msg });
@@ -34,9 +46,40 @@ const Details = ({ category, header, data }: ActionProps) => {
       });
     }
   };
+  const handleConfirmation = async () => {
+    if (confirm) {
+      try {
+        await deleteByIdApi(confirm);
+
+        setConfirm(null);
+        setFaqMessage("Blog deleted successfully!");
+        setTimeout(() => {
+          setFaqMessage(null);
+        }, 3000);
+      } catch (error: any) {
+        console.log(error);
+
+        setFaqMessage(String(error.response.data.message));
+        setTimeout(() => {
+          setFaqMessage(null);
+          window.location.reload();
+        }, 3000);
+      }
+    }
+  };
 
   return (
     <div className="text-white mt-8 border bg-black rounded-lg opacity-60 p-5">
+      {faqMessage && (
+        <ErrorDisplayPage color={"text-white"} message={faqMessage} />
+      )}
+      {confirm && (
+        <ConfirmAction
+          message="Are you sure you want to delete this FaQs data?"
+          handleConfirmation={handleConfirmation}
+          setConfirm={setConfirm}
+        />
+      )}
       <div className="font-semibold text-2xl text-white">{category}</div>
       <div className="flex flex-row justify-start items-center gap-2 py-5">
         <div>search entries:</div>
@@ -75,12 +118,12 @@ const Details = ({ category, header, data }: ActionProps) => {
                 <div
                   className={`${!showSidebar ? "w-[200px]" : "w-[100px]"} p-3`}
                 >
-                  {data.status}
+                  {String(data.status)}
                 </div>
                 <div
                   className={`${!showSidebar ? "w-[200px]" : "w-[180px]"} p-3`}
                 >
-                  {data.updatedAt}
+                  {data.date}
                 </div>
                 <div
                   className={`${
@@ -88,7 +131,7 @@ const Details = ({ category, header, data }: ActionProps) => {
                   } flex flex-row justify-start items-center gap-2 p-4`}
                 >
                   <div
-                    onClick={() => handleEdit("456")}
+                    onClick={() => handleEdit(String(data._id))}
                     onMouseEnter={() => handleMouseEnter(index, "Edit")}
                     onMouseLeave={() => handleMouseLeave()}
                     className="relative flex flex-row justify-center items-center"
@@ -106,6 +149,7 @@ const Details = ({ category, header, data }: ActionProps) => {
                   </div>
                   <div className=" rounded p-1 cursor-pointer relative">
                     <div
+                      onClick={() => setConfirm(String(data._id))}
                       onMouseEnter={() => handleMouseEnter(index, "Delete")}
                       onMouseLeave={() => handleMouseLeave()}
                       className="relative flex flex-row justify-start items-start"

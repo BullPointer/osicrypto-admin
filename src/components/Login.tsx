@@ -48,6 +48,7 @@ const Login = () => {
       }
       return setErr(errors);
     }
+
     try {
       const response = await loginApi(user);
 
@@ -64,21 +65,30 @@ const Login = () => {
         navigate(locationPath, { replace: true });
       }
     } catch (error: any) {
-      setErr({ email: error.response.data.message } as userInputType);
+      console.log(error);
+
+      setErr({
+        email: (error.response?.data.message || error.message),
+      } as userInputType);
     }
   };
   useEffect(() => {
     if (location.state) {
       setRouteError(true);
       setTimeout(() => {
-        setRouteError(false)
+        setRouteError(false);
       }, 3000);
     }
   }, []);
 
   return (
     <div className="relative w-full h-screen ">
-      {routeError && <ErrorDisplayPage color={"text-red-400"} message={"Please Login to continue"} />}
+      {routeError && (
+        <ErrorDisplayPage
+          color={"text-red-400"}
+          message={"Please Login to continue"}
+        />
+      )}
       <div className="-z-10 absolute w-[100%] h-[100%] opacity-95">
         <img src={Img} alt="" className="w-[100%] h-[100%] bg-no-repeat" />
       </div>

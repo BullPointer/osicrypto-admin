@@ -1,9 +1,31 @@
 import { Link } from "react-router-dom";
 import { FaqDetails } from ".";
 import { useAppContext } from "../context/AppContext";
-import { faqsData } from "../database/faqsData";
+import dayjs from "dayjs";
+import { getFaqsApi } from "../api/FaqApi";
+import { useEffect, useState } from "react";
 
 const Faqs = () => {
+  const [faqData, setFaqData] = useState([]);
+  const [confirm, setConfirm] = useState<string | null>(null);
+
+  const getBlogs = async () => {
+    const response = await getFaqsApi();
+    if (response.status == 200) {
+      setFaqData(response.data.data.map((faq: { date: string }) => {
+        const date = new Date(Number(faq.date));
+        return {
+          ...faq,
+          date: dayjs(date.toUTCString()).format("YYYY-MM-DD h:mm A"),
+        };
+      }));
+    }
+  };
+  
+  useEffect(() => {
+    getBlogs();
+  }, [confirm]);
+
   const { showSidebar } = useAppContext();
   const smallFaqs = [
     { text: "Question", width: "w-[400px]" },
@@ -32,9 +54,11 @@ const Faqs = () => {
         </Link>
       </div>
       <FaqDetails
+        confirm={confirm}
+        setConfirm={setConfirm}
         category={"FAQs"}
         header={!showSidebar ? faqs : smallFaqs}
-        data={faqsData}
+        data={faqData}
       />{" "}
     </div>
   );

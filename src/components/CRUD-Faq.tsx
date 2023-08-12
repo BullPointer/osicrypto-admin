@@ -1,28 +1,53 @@
 import Joi from "joi";
-import React, { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Input, { faqInputType } from "./utils/Input";
 import Select from "./utils/Select";
+import { createFaqApi, editByIdApi, getFaqByIdApi } from "../api/FaqApi";
+import { ErrorDisplayPage } from "./ErrorDisplayPage";
+import { faqListA, faqListB } from "./CRUD-Data";
 
 const CrudFaq = () => {
   const faqObject = {
     question: "",
     type: "",
-    status: "",
+    status: "true",
     answer: "",
   };
   const [useParams] = useSearchParams();
+  const navigate = useNavigate();
   const id = useParams.get("id");
-  const [err, setErr] = useState<faqInputType | null>(faqObject);
+  const [faqMessage, setFaqMessage] = useState<string | null>(null);
+  const [err, setErr] = useState<faqInputType | null>(null);
   const [faq, setFaq] = useState({
     ...faqObject,
     type: "Main",
-    status: "Active",
   });
   const schema = Joi.object({
     question: Joi.string(),
     answer: Joi.string(),
+    status: Joi.string(),
+    type: Joi.string(),
   });
+
+  const getBlogById = async () => {
+    if (id) {
+      const response = await getFaqByIdApi(id);
+      if (response.status == 200) {
+        setFaq({
+          ...faq,
+          question: response.data.data.question,
+          answer: response.data.data.answer,
+          status: String(response.data.data.status),
+          type: response.data.data.type,
+        });
+      }
+    }
+  };
+
+  useEffect(() => {
+    getBlogById();
+  }, []);
 
   const handleChange = ({
     target,
@@ -32,13 +57,14 @@ const CrudFaq = () => {
         HTMLTextAreaElement | HTMLSelectElement | HTMLInputElement
       >) => {
     const { name, value } = target as HTMLInputElement | HTMLTextAreaElement;
+
     setFaq({ ...faq, [name]: value });
   };
 
-  const handleSubmit = (e: Event | React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: Event | React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const errors = {} as faqInputType;
+    
+    const errors: any = {};
     const { error } = schema.validate(faq, { abortEarly: false });
     if (error) {
       for (let index = 0; index < error.details.length; index++) {
@@ -47,11 +73,77 @@ const CrudFaq = () => {
       }
       return setErr(errors);
     }
-    console.log("NO error");
+    if (id) {
+      try {
+        const response = await getFaqByIdApi(id);
+        const compareObj: faqInputType = {
+          ...faq,
+          question: response.data.data.question,
+          type: response.data.data.category,
+          status: response.data.data.status,
+          answer: response.data.data.answer,
+        };
+
+        let editedBlog: any = [];
+        for (const key in faq) {
+          if (faq.hasOwnProperty(key) && compareObj.hasOwnProperty(key)) {
+            if (
+              faq[key as keyof faqInputType] !==
+              compareObj[key as keyof faqInputType]
+            ) {
+              const reqObj: any = {};
+
+              reqObj["key"] = key;
+              reqObj["value"] = faq[key as keyof faqInputType];
+              editedBlog.push(reqObj);
+            }
+          }
+        }
+
+        await editByIdApi(editedBlog, id);
+
+        setErr(null);
+        setFaqMessage("FaQ edited sucessfully!");
+        setTimeout(() => {
+          setFaqMessage(null);
+          navigate("/admin/faq");
+        }, 3000);
+      } catch (error) {
+        console.log(error);
+
+        setFaqMessage(
+          String(
+            "An unexpected error occured, speak with your developer for more details"
+          )
+        );
+        setTimeout(() => {
+          setFaqMessage(null);
+        }, 3000);
+      }
+    } else {
+      try {
+        await createFaqApi(faq);
+
+        setErr(null);
+        setFaqMessage("FaQ published sucessfully!");
+        setTimeout(() => {
+          setFaqMessage(null);
+          navigate("/admin/faq");
+        }, 3000);
+      } catch (error: any) {
+        setFaqMessage(String(error.response?.data.message || error.message));
+        setTimeout(() => {
+          setFaqMessage(null);
+        }, 3000);
+      }
+    }
   };
 
   return (
     <div className="bg-black w-full min-h-screen px-4 py-8 text-white">
+      {faqMessage && (
+        <ErrorDisplayPage color={"text-blue-400"} message={faqMessage} />
+      )}
       <div className="font-semibold text-2xl text-white py-2 border-b">
         Create ( <span className="opacity-80">FAQ</span> )
       </div>
@@ -74,27 +166,17 @@ const CrudFaq = () => {
 
         <Select
           handleChange={handleChange}
-          listArr={[
-            "Main",
-            "Deposit",
-            "Fiat Deposit",
-            "Withdrawn",
-            "Buy",
-            "Sell",
-            "Coin",
-            "Wallet",
-            "Trade",
-            "P2P",
-            "Gift Card",
-          ]}
+          listArr={faqListA}
           label={"FAQ Type"}
           name={"type"}
+          value={faq.type}
         />
         <Select
           handleChange={handleChange}
-          listArr={["Active", "Deactive"]}
+          listArr={faqListB}
           label={"Activation Status"}
           name={"status"}
+          value={faq.status}
         />
 
         <div className="flex flex-col justify-start items-start w-full">

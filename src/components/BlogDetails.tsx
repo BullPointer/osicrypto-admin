@@ -72,7 +72,7 @@ const Details = ({ category, header, data, confirm, setConfirm }: ActionProps) =
       )}
       {confirm && (
         <ConfirmAction
-          message="Are you sure you want to delete this blog?"
+          message="Are you sure you want to delete this Blog data?"
           handleConfirmation={handleConfirmation}
           setConfirm={setConfirm}
         />
