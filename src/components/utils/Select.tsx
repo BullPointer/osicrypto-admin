@@ -13,7 +13,7 @@ const Select = ({ handleChange, listArr, label, name, value }: SelectProps) => {
   return (
     <div className="flex flex-col justify-start items-start">
       <label
-        className="text-white pt-5 font-semibold font-mono text-xl"
+        className="text-white pt-5 font-semibold font-mono text-[15px] sm:text-[18px] md:text-xl"
         htmlFor=""
       >
         {label}
@@ -21,7 +21,7 @@ const Select = ({ handleChange, listArr, label, name, value }: SelectProps) => {
       <select
         value={value}
         onChange={handleChange}
-        className="outline-none w-[50%] bg-transparent border-b-2 font-bold"
+        className="outline-none w-[100%] lg:w-[50%] bg-transparent border-b-2 font-bold"
         name={name}
       >
         {listArr?.map((list, index) => (

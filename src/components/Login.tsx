@@ -92,8 +92,8 @@ const Login = () => {
       <div className="-z-10 absolute w-[100%] h-[100%] opacity-95">
         <img src={Img} alt="" className="w-[100%] h-[100%] bg-no-repeat" />
       </div>
-      <div className="w-full flex flex-row justify-start items-center text-white ">
-        <div className="p-4 w-[50%]">
+      <div className="w-full flex flex-col md:flex-row justify-start items-center text-white">
+        <div className="p-4 w-[100%] md:w-[50%]">
           <form
             onSubmit={handleSubmit}
             className="flex flex-col justify-center px-10 py-10 shadow-sm shadow-white bg-black rounded-md"
@@ -101,8 +101,8 @@ const Login = () => {
             method="post"
           >
             <div className="w-full">
-              <div className="text-3xl font-bold">Sign In</div>
-              <div className="font-bold">Please Sign In To Your Account</div>
+              <div className="text-xl sm:text-3xl font-bold">Sign In</div>
+              <div className="text-[12px] sm:text-[16px] font-bold">Please Sign In To Your Account</div>
             </div>
             <Input
               onChange={handleChange}
@@ -128,14 +128,14 @@ const Login = () => {
               forgot password
             </div>
             <button
-              className="bg-yellow-500 w-[50%] py-2 px-3  mt-2 rounded-md font-bold text-lg"
+              className="bg-yellow-500 w-[50%] py-1 lg:py-2 px-3  mt-2 rounded-md font-bold text-[15px] md:text-lg"
               type="submit"
             >
               Sign In
             </button>
           </form>
         </div>
-        <div className="w-[50%] text-4xl px-10 font-bold">
+        <div className="w-[80%] md:w-[50%] text-2xl sm:text-4xl px-2 sm:px-7 lg:px-10 font-bold">
           Welcome To <span className="text-[#bd5959]">Osicrypto</span> Exchange
         </div>
       </div>

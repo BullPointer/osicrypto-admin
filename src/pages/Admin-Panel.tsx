@@ -7,7 +7,7 @@ const AdminPanel = () => {
   const { showSidebar, setShowSidebar } = useAppContext();
   return (
     <div className="flex flex-row">
-      {<Sidebar showSidebar={showSidebar} />}
+      {<Sidebar setShowSidebar={setShowSidebar} showSidebar={showSidebar} />}
       <div className="w-full h-screen overflow-y-scroll">
         <Navbar setShowSidebar={setShowSidebar} showSidebar={showSidebar} />
         <Outlet />

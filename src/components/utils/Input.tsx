@@ -26,7 +26,7 @@ const Input = ({ label, name, type, onChange, objectValue }: InputProps) => {
   return (
     <div className="flex flex-col justify-start items-start">
       <label
-        className="text-white pt-5 font-semibold font-mono text-xl"
+        className="text-white pt-5 font-semibold font-mono text-[15px] sm:text-[18px] md:text-xl"
         htmlFor=""
       >
         {label}
@@ -36,7 +36,7 @@ const Input = ({ label, name, type, onChange, objectValue }: InputProps) => {
         type={type}
         name={name}
         value={objectValue[name as keyof typeof objectValue]}
-        className="outline-none w-[50%] bg-transparent border-b-2"
+        className="outline-none w-[100%] lg:w-[50%] bg-transparent border-b-2"
       />
     </div>
   );

@@ -28,12 +28,12 @@ const BlogImage = ({ blog, setBlog }: ImageProps) => {
         type="file"
         name="img"
         accept="image/jpg, image/jpeg, image/png"
-        className="outline-none w-[21%] bg-transparent "
+        className="outline-none w-[21%] bg-transparent text-sm"
       />
       {blog.blogImage && (
         <div className="h-[18rem] w-[100%]">
           <img
-            className="w-[50%] h-[100%] bg-transparent mt-2 rounded"
+            className="w-[100%] md:w-[50%] h-[100%] bg-transparent mt-2 rounded object-cover "
             src={
               typeof blog.blogImage === "object"
                 ? URL.createObjectURL(blog.blogImage)
@@ -44,7 +44,7 @@ const BlogImage = ({ blog, setBlog }: ImageProps) => {
         </div>
       )}
       <label
-        className="text-white opacity-80 mb-2 pt-5 font-semibold font-mono text-xl"
+        className="text-white opacity-80 mb-2 pt-5 font-semibold font-mono text-[15px] sm:text-xl"
         htmlFor=""
       >
         {!blog.blogImage && imageName && `Image: ${imageName ? imageName : "no image selected"}`}

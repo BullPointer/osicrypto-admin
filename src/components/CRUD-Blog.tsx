@@ -138,6 +138,8 @@ const CrudBlog = () => {
           navigate("/admin/blog");
         }, 3000);
       } catch (error: any) {
+        console.log(error);
+
         setBlogMessage(
           String(
             blog.blogImage === null && "Please select an image to publish blog"
@@ -244,7 +246,7 @@ const CrudBlog = () => {
         )} */}
         <div className="flex flex-col justify-start items-start w-full">
           <label
-            className="text-white pt-5 font-semibold font-mono text-xl"
+            className="text-white pt-5 font-semibold font-mono text-[15px] sm:text-[18px] md:text-xl"
             htmlFor=""
           >
             Write article
@@ -253,14 +255,14 @@ const CrudBlog = () => {
             onChange={handleChange}
             value={blog["notes"]}
             name="notes"
-            className="outline-none resize-none w-[50%] bg-transparent border-b-2"
+            className="outline-none resize-none w-[100%] lg:w-[50%] bg-transparent border-b-2"
           ></textarea>
           {err?.notes && (
             <div className="text-sm text-red-400">{err.notes}</div>
           )}
         </div>
         <button
-          className="bg-[#e7353511] hover:bg-blue-800 px-8 py-2 rounded-lg my-2 font-bold text-lg"
+          className="bg-[#e7353511] hover:bg-blue-800 px-8 py-1 sm:py-2 rounded-lg my-2 font-bold text-[15px] sm:text-lg"
           type="submit"
         >
           {id ? <span>Edit</span> : <span>Publish</span>}

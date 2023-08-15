@@ -25,7 +25,7 @@ const Dashboard = () => {
       <div className="border-b font-semibold text-2xl text-white">
         Dashboard
       </div>
-      <div className="grid grid-cols-3 gap-4 mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
         {dashboardlist?.map((list, index) => (
           <div
             key={index}

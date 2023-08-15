@@ -45,11 +45,11 @@ const Blog = () => {
   return (
     <div className=" bg-black w-full min-h-screen px-4 py-8">
       <div className="flex flex-row justify-between items-center border-b">
-        <div className=" font-semibold text-2xl text-white my-2">
+        <div className=" font-semibold text-2xl text-white my-2 text-[12px] sm:text-[16px]">
           Settings / <span className="opacity-80">Blogs</span>
         </div>
         <Link to={"create-blog"}>
-          <div className="bg-[#3e4869] blue-glassmorphism px-2 py-1 cursor-pointer rounded my-2 text-white font-bold">
+          <div className="bg-[#3e4869] blue-glassmorphism px-2 py-1 text-[12px] sm:text-[16px] cursor-pointer rounded my-2 text-white font-bold">
             Create new blog
           </div>
         </Link>

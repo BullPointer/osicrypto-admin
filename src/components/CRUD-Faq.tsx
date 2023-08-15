@@ -190,14 +190,14 @@ const CrudFaq = () => {
             onChange={handleChange}
             value={faq["answer"]}
             name="answer"
-            className="outline-none resize-none w-[50%] bg-transparent border-b-2"
+            className="outline-none resize-none w-[100%] lg:w-[50%] bg-transparent border-b-2"
           ></textarea>
           {err?.answer && (
             <div className="text-sm text-red-400">{err.answer}</div>
           )}
         </div>
         <button
-          className="bg-[#e7353511] hover:bg-blue-800 px-8 py-2 rounded-lg my-2 font-bold text-lg"
+          className="bg-[#e7353511] hover:bg-blue-800 px-8 py-1 sm:py-2 rounded-lg my-2 font-bold text-[15px] sm:text-lg"
           type="submit"
         >
           {id ? <span>Edit</span> : <span>Publish</span>}

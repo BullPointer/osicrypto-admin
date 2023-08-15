@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import { faqType } from "./types";
@@ -30,7 +30,9 @@ const Details = ({
   const navigate = useNavigate();
   const [action, setAction] = useState({} as ActionType);
   const { showSidebar } = useAppContext();
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [faqMessage, setFaqMessage] = useState<string | null>(null);
+  const [showDetail, setShowDetail] = useState<number | null>(null);
 
   const handleMouseEnter = (index: number, msg: string) => {
     setAction({ ...action, index, msg });
@@ -67,9 +69,16 @@ const Details = ({
       }
     }
   };
+  useEffect(() => {
+    const handleScreen = () => {
+      setScreenWidth(window.innerWidth);
+    };
+    window.addEventListener("resize", handleScreen);
+    return () => window.removeEventListener("resize", handleScreen);
+  }, []);
 
   return (
-    <div className="text-white mt-8 border bg-black rounded-lg opacity-60 p-5">
+    <div className="text-white mt-8 border bg-black rounded-lg opacity-60 px-1 py-3 sm:p-5">
       {faqMessage && (
         <ErrorDisplayPage color={"text-white"} message={faqMessage} />
       )}
@@ -80,11 +89,13 @@ const Details = ({
           setConfirm={setConfirm}
         />
       )}
-      <div className="font-semibold text-2xl text-white">{category}</div>
-      <div className="flex flex-row justify-start items-center gap-2 py-5">
-        <div>search entries:</div>
+      <div className="font-semibold text-[15px] md:text-2xl text-white">
+        {category}
+      </div>
+      <div className="flex flex-row justify-center sm:justify-start items-center gap-1 sm:gap-2 py-5">
+        <div className="text-[12px] sm:text-[15px]">search entries:</div>
         <input
-          className="rounded p-1 outline-none text-white bg-black border focus:border-none"
+          className="rounded p-0 sm:p-1 outline-none text-white bg-black border focus:border-none"
           type="search"
           name=""
           id=""
@@ -93,9 +104,19 @@ const Details = ({
       <div>
         <div className="flex flex-col justify-center items-start w-full rounded bg-[#1a1717]">
           <div className="flex flex-row justify-start items-center w-full">
-            {header.map((list, index) => (
-              <div key={index} className={`${list.width} p-4 font-semibold`}>
-                {list.text}
+            <div className="block md:hidden ml-1">*</div>
+            {header.map(({ width, text }, index) => (
+              <div
+                key={index}
+                className={`${width} p-4 font-semibold text-[14px] sm:text-[16px] ${
+                  screenWidth <= 768 &&
+                  (text.toLowerCase() === "status" ||
+                    text.toLowerCase() === "updated at")
+                    ? "hidden"
+                    : "block"
+                }`}
+              >
+                {text}
               </div>
             ))}
           </div>
@@ -105,30 +126,53 @@ const Details = ({
                 key={index}
                 className="flex flex-row justify-start items-center w-full"
               >
+                <div className="block md:hidden">
+                  {showDetail === index ? (
+                    <Icon
+                      onClick={() => setShowDetail(null)}
+                      className="text-red-600 cursor-pointer text-[15px] ml-1"
+                      icon="dashicons:remove"
+                    />
+                  ) : (
+                    <Icon
+                      onClick={() => setShowDetail(index)}
+                      className="text-blue-600 cursor-pointer text-[15px] ml-1"
+                      icon="zondicons:add-outline"
+                    />
+                  )}
+                </div>
                 <div
-                  className={`${!showSidebar ? "w-[400px]" : "w-[400px]"} p-3`}
+                  className={`${
+                    !showSidebar ? "w-[400px]" : "w-[400px]"
+                  } p-3 text-[12px] sm:text-[16px]`}
                 >
                   {data.question}
                 </div>
                 <div
-                  className={`${!showSidebar ? "w-[200px]" : "w-[100px]"} p-3`}
+                  className={`${
+                    !showSidebar ? "w-[200px]" : "w-[100px]"
+                  } p-3 text-[12px] sm:text-[16px]`}
                 >
                   {data.type}
                 </div>
                 <div
-                  className={`${!showSidebar ? "w-[200px]" : "w-[100px]"} p-3`}
+                  className={`${
+                    !showSidebar ? "w-[200px]" : "w-[100px]"
+                  } p-3 hidden md:block text-[12px] sm:text-[16px]`}
                 >
                   {String(data.status)}
                 </div>
                 <div
-                  className={`${!showSidebar ? "w-[200px]" : "w-[180px]"} p-3`}
+                  className={`${
+                    !showSidebar ? "w-[200px]" : "w-[180px]"
+                  } p-3 hidden md:block text-[12px] sm:text-[16px]`}
                 >
                   {data.date}
                 </div>
                 <div
                   className={`${
                     !showSidebar ? "w-[200px]" : "w-[150px]"
-                  } flex flex-row justify-start items-center gap-2 p-4`}
+                  } flex flex-row justify-start items-center gap-2 p-4 text-[12px] sm:text-[16px]`}
                 >
                   <div
                     onClick={() => handleEdit(String(data._id))}
@@ -137,9 +181,8 @@ const Details = ({
                     className="relative flex flex-row justify-center items-center"
                   >
                     <Icon
-                      className="cursor-pointer "
+                      className="cursor-pointer text-[18px] sm:text-[30px]"
                       icon="clarity:edit-solid"
-                      fontSize={23}
                     />
                     {action.index === index && action.msg === "Edit" && (
                       <div className="z-10 absolute -bottom-6 -right-8 bg-[#000] p-1 text-sm">
@@ -155,9 +198,8 @@ const Details = ({
                       className="relative flex flex-row justify-start items-start"
                     >
                       <Icon
-                        className="cursor-pointer "
+                        className="cursor-pointer text-[20px] sm:text-[23px]"
                         icon="fluent:delete-16-filled"
-                        fontSize={23}
                       />
                       {action.index === index && action.msg === "Delete" && (
                         <div className="z-10 absolute -bottom-6 -right-14 bg-[#000] p-1 text-sm">
@@ -168,6 +210,16 @@ const Details = ({
                   </div>
                 </div>
               </div>
+              {showDetail === index && (
+                <div className="w-full">
+                  <div className="px-2 py-1 block md:hidden text-sm sm:text-[16px]">
+                    Status: {data.status}
+                  </div>
+                  <div className="wrap-word px-2 py-1 block lg:hidden text-sm sm:text-[16px]">
+                    Updated At: {data.date}
+                  </div>
+                </div>
+              )}
             </>
           ))}
         </div>
