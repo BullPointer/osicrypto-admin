@@ -22,7 +22,7 @@ const Blog = () => {
         })
       );
     }
-  };
+  };  
 
   useEffect(() => {
     getBlogs();

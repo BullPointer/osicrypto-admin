@@ -10,15 +10,20 @@ type ActionType = {
 
 type ActionProps = {
   category: string;
-  header: { text: string; width: string }[];
-  data: dashboardType[];
+  data: any[];
+  paginateNum: number[];
+  setPageNum: React.Dispatch<React.SetStateAction<number>>;
 };
 
-const Details = ({ category, header, data }: ActionProps) => {
+const Details = ({
+  category,
+  data,
+  paginateNum,
+  setPageNum,
+}: ActionProps) => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [showDetail, setShowDetail] = useState<number | null>(null);
   const [action, setAction] = useState({} as ActionType);
-  const { showSidebar } = useAppContext();
 
   const handleMouseEnter = (index: number, msg: string) => {
     setAction({ ...action, index, msg });
@@ -48,13 +53,13 @@ const Details = ({ category, header, data }: ActionProps) => {
         />
       </div>
       <div>
-        <div className="flex flex-col justify-center items-start w-full rounded bg-[#1a1717]">
-          <div className="flex flex-row justify-start items-center w-full">
-            {header.map(({ text, width }, index) => (
+        <div className=" w-full rounded bg-[#1a1717]">
+          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 w-full">
+            {["", "Type", "Address To", "Coin Type", "Actions"].map((text, index) => (
               <div
                 key={index}
-                className={`${width} p-4 font-semibold text-[14px] sm:text-[16px] ${
-                  screenWidth <= 1024 && text.toLowerCase() === "address"
+                className={`p-3 text-start font-semibold text-[14px] sm:text-[16px] ${
+                  screenWidth <= 1024 && text.toLowerCase() === "address to"
                     ? "hidden"
                     : "block"
                 } ${
@@ -72,12 +77,10 @@ const Details = ({ category, header, data }: ActionProps) => {
             <>
               <div
                 key={index}
-                className="flex flex-row justify-start items-center w-full"
+                className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 w-full"
               >
                 <div
-                  className={`${
-                    !showSidebar ? "w-[200px]" : "w-[150px]"
-                  } p-3 flex flex-row justify-start items-center gap-1`}
+                  className={`p-3 flex flex-row justify-start items-center gap-1`}
                 >
                   {showDetail === index ? (
                     <Icon
@@ -97,30 +100,20 @@ const Details = ({ category, header, data }: ActionProps) => {
                   <div className="text-[14px] sm:text-[16px]">External</div>
                 </div>
                 <div
-                  className={`${
-                    !showSidebar ? "w-[150px]" : "w-[130px]"
-                  }  p-3 hidden md:block text-[14px] sm:text-[16px]`}
+                  className={`p-3 hidden md:block text-[14px] sm:text-[16px] `}
                 >
-                  {data.sender}
+                  {"data.sender"}
                 </div>
                 <div
-                  className={`${
-                    !showSidebar ? "w-[450px]" : "w-[400px]"
-                  } p-3 hidden lg:block text-[14px] sm:text-[16px]`}
+                  className={`wrap-word p-3 hidden lg:block text-[14px] sm:text-[16px] `}
                 >
-                  {data.address}
+                  {data.address_to}
+                </div>
+                <div className={` p-3 text-[14px] sm:text-[16px]`}>
+                  {data.currency_to.toUpperCase()}
                 </div>
                 <div
-                  className={`${
-                    !showSidebar ? "w-[200px]" : "w-[150px]"
-                  } p-3 text-[14px] sm:text-[16px]`}
-                >
-                  {data.currency}
-                </div>
-                <div
-                  className={`${
-                    !showSidebar ? "w-[200px]" : "w-[150px]"
-                  } flex flex-row justify-start items-center gap-2 p-4 text-[14px] sm:text-[16px]`}
+                  className={`flex flex-row justify-start items-center gap-2 p-4 text-[14px] sm:text-[16px]`}
                 >
                   <div
                     onMouseEnter={() => handleMouseEnter(index, "Accept")}
@@ -158,32 +151,52 @@ const Details = ({ category, header, data }: ActionProps) => {
               </div>
               {showDetail === index && (
                 <div className="w-full">
+                  <div className="px-2 py-1 text-sm sm:text-[16px]">
+                    Status: {data.status}
+                  </div>
                   <div className="px-2 py-1 block md:hidden text-sm sm:text-[16px]">
-                    Sender: {data.sender}
-                  </div>
-                  <div className="wrap-word px-2 py-1 block lg:hidden text-sm sm:text-[16px]">
-                    Address: {data.address}
-                  </div>
-                  <div className="px-2 py-1 text-sm sm:text-[16px]">
-                    Receiver: {data.receiver}
-                  </div>
-                  <div className="px-2 py-1 text-sm sm:text-[16px]">
-                    Amount: {data.amount}
-                  </div>
-                  <div className="px-2 py-1 text-sm sm:text-[16px]">
-                    Fees: {data.fees}
+                    Sender: {"data.sender"}
                   </div>
                   <div className="wrap-word px-2 py-1 text-sm sm:text-[16px]">
-                    Transaction Id: {data.transactionId}
+                    Address From: {data.address_from}
+                  </div>
+                  <div className="wrap-word px-2 py-1 block lg:hidden text-sm sm:text-[16px]">
+                    Address To: {data.address_to}
                   </div>
                   <div className="px-2 py-1 text-sm sm:text-[16px]">
-                    Update Date: {data.date}
+                    Receiver: {"data.receiver"}
+                  </div>
+                  <div className="px-2 py-1 text-sm sm:text-[16px]">
+                    Amount From: {data.amount_from}
+                  </div>
+                  <div className="px-2 py-1 text-sm sm:text-[16px]">
+                    Amount To: {data.amount_to}
+                  </div>
+                  <div className="px-2 py-1 text-sm sm:text-[16px]">
+                    Fees: {"data.fees"}
+                  </div>
+                  <div className="wrap-word px-2 py-1 text-sm sm:text-[16px]">
+                    Transaction Id: {data.id}
+                  </div>
+                  <div className="px-2 py-1 text-sm sm:text-[16px]">
+                    Update Date: {data.timestamp}
                   </div>
                 </div>
               )}
             </>
           ))}
         </div>
+      </div>
+      <div className="flex flex-row justify-center items-center my-2">
+        {paginateNum?.map((num, index) => (
+          <div
+            onClick={() => setPageNum(index)}
+            className="py-1 px-3 sm:px-6 bg-[#333131] text-white border-r-2 last:border-r-0 font-bold cursor-pointer"
+            key={index}
+          >
+            {num + 1}
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -1,11 +1,17 @@
 import Joi from "joi";
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  createSearchParams,
+  useNavigate,
+  useSearchParams,
+  useLocation,
+} from "react-router-dom";
 import { createBlogApi, editByIdApi, getBlogByIdApi } from "../api/BlogApi";
 import BlogImage from "./utils/BlogImage";
 import Input, { blogInputType } from "./utils/Input";
 import Select from "./utils/Select";
 import { ErrorDisplayPage } from "./ErrorDisplayPage";
+import { useEditorContext } from "../context/EditorContext";
 
 const CrudBlog = () => {
   const blogObj = {
@@ -19,6 +25,7 @@ const CrudBlog = () => {
 
   const [useParams] = useSearchParams();
   const id = useParams.get("id");
+  const { pathname, state } = useLocation();
   const [err, setErr] = useState<blogInputType | null>(blogObj);
   const [blogMessage, setBlogMessage] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -26,11 +33,12 @@ const CrudBlog = () => {
     ...blogObj,
     category: "Latest News",
   });
+  const { editorMsg, setEditorMsg } = useEditorContext();
 
   const getBlogById = async () => {
     if (id) {
       const response = await getBlogByIdApi(id);
-      if (response.status == 200) {
+      if (response.status == 200 && !state) {
         setBlog({
           ...blog,
           blogImage: `http://localhost:3000/${response.data.data.blogImage}`,
@@ -41,6 +49,22 @@ const CrudBlog = () => {
           notes: response.data.data.notes,
         });
       }
+      if (response.status == 200 && state) {
+        setBlog({
+          ...blog,
+          blogImage: `http://localhost:3000/${response.data.data.blogImage}`,
+          category: response.data.data.category,
+          title: response.data.data.title,
+          subtitle: response.data.data.subtitle,
+          author: response.data.data.author,
+          notes: editorMsg,
+        });
+        console.log("come back state is ", blog.notes);
+      }
+    } else {
+      setBlog({ ...blog, notes: editorMsg });
+      // setEditorMsg("");
+      console.log("Just checking", blog.notes, editorMsg);
     }
   };
 
@@ -71,6 +95,21 @@ const CrudBlog = () => {
       >) => {
     const { name, value } = target as HTMLInputElement | HTMLTextAreaElement;
     setBlog({ ...blog, [name]: value });
+  };
+
+  const handleWrite = async () => {
+    if (id) {
+      setEditorMsg(blog.notes);
+      navigate(
+        {
+          pathname: "/admin/editor",
+          search: createSearchParams({ id: id }).toString(),
+        },
+        { state: { path: pathname } }
+      );
+    } else {
+      navigate("/admin/editor", { state: { path: pathname } });
+    }
   };
 
   const handleSubmit = async (e: Event | React.FormEvent<HTMLFormElement>) => {
@@ -244,21 +283,24 @@ const CrudBlog = () => {
         {err?.author && (
           <div className="text-sm text-red-400">{err.author}</div>
         )} */}
-        <div className="flex flex-col justify-start items-start w-full">
-          <label
-            className="text-white pt-5 font-semibold font-mono text-[15px] sm:text-[18px] md:text-xl"
-            htmlFor=""
-          >
-            Write article
-          </label>
-          <textarea
-            onChange={handleChange}
-            value={blog["notes"]}
-            name="notes"
-            className="outline-none resize-none w-[100%] lg:w-[50%] bg-transparent border-b-2"
-          ></textarea>
-          {err?.notes && (
-            <div className="text-sm text-red-400">{err.notes}</div>
+
+        <div className="py-4 ">
+          {(id && blog.notes !== "") || (!id && blog.notes !== "") ? (
+            <div
+              onClick={handleWrite}
+              className="cursor-pointer bg-blue-800 w-[100%] lg:w-[50%] py-2 px-3 font-bold text-center rounded-md"
+            >
+              {id ? (
+                <span>Edit Blog/Article</span>
+              ) : (
+                <span>Write Blog/Article</span>
+              )}
+            </div>
+          ) : (
+            <div className="cursor-pointer bg-blue-800 w-[100%] lg:w-[50%] py-2 px-3 font-bold text-center rounded-md">
+              {" "}
+              Loading...
+            </div>
           )}
         </div>
         <button

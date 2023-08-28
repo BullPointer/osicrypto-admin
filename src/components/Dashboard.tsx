@@ -1,32 +1,110 @@
 import { Icon } from "@iconify/react";
 import { DashboardDetails } from ".";
-import { dashboardlist } from "./Sidebarlist";
-import { pendingwithdrawal } from "../database/pendingWithdrawal";
-import { useAppContext } from "../context/AppContext";
+import { DashboardlistType, dashboardlist } from "./Sidebarlist";
+import { useEffect, useState } from "react";
+import { getExchanges } from "../api/ExchangeApi";
+import { usersApi, visitorsApi, workersApi } from "../api/Api";
+import { handleDashboard } from "./utils/DashboardHandler";
+
+type VisitorsType = {
+  _id: string;
+  visitors: number;
+  views: number;
+};
 
 const Dashboard = () => {
-  const { showSidebar } = useAppContext();
-  const smallHeaderText = [
-    { text: "Type", width: "w-[150px]" },
-    { text: "Sender", width: "w-[130px]" },
-    { text: "Address", width: "w-[400px]" },
-    { text: "Coin Type", width: "w-[150px]" },
-    { text: "Actions", width: "w-[150px]" },
-  ];
-  const headerText = [
-    { text: "Type", width: "w-[200px]" },
-    { text: "Sender", width: "w-[150px]" },
-    { text: "Address", width: "w-[450px]" },
-    { text: "Coin Type", width: "w-[200px]" },
-    { text: "Actions", width: "w-[200px]" },
-  ];
+  const [dashboardData, setDashboardData] = useState([...dashboardlist] as any);
+  const [data, setData] = useState([] as any);
+  const [limit, setLimit] = useState<number>(100);
+  const [paginateNum, setPaginateNum] = useState<number[]>([]);
+  const [pageNum, setPageNum] = useState<number>(0);
+  const numOfItemsPerPage = 10;
+  const numOfPage = Math.ceil(data.length / numOfItemsPerPage);
+  const newData = data.slice(
+    pageNum * numOfItemsPerPage,
+    numOfItemsPerPage * (pageNum + 1)
+  );
+
+  useEffect(() => {
+    const link = "https://api.simpleswap.io/get_exchanges";
+    const handleGetExchange = async () => {
+      try {
+        const { data: exchangeData } = await getExchanges(link, String(limit));
+        setData(exchangeData);
+
+        const { data: visitorsData } = await visitorsApi();
+        const { data: workersData } = await workersApi();
+        const { data: usersData } = await usersApi();
+
+        await handleDashboard(
+          dashboardData,
+          "visitors",
+          String(visitorsData.data[0].visitors),
+          setDashboardData
+        );
+
+        await handleDashboard(
+          dashboardData,
+          "views",
+          String(visitorsData.data[0].views),
+          setDashboardData
+        );
+
+        await handleDashboard(
+          dashboardData,
+          "users",
+          String(workersData.count),
+          setDashboardData
+        );
+
+        await handleDashboard(
+          dashboardData,
+          "workers",
+          String(workersData.count),
+          setDashboardData
+        );
+
+        await handleDashboard(
+          dashboardData,
+          "transaction",
+          String(exchangeData.length),
+          setDashboardData
+        );
+
+        const filterExpired = exchangeData.filter(
+          (data: any) => data.status === "exchanging"
+        );
+
+        await handleDashboard(
+          dashboardData,
+          "pending_exchange",
+          String(filterExpired.length),
+          setDashboardData
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    handleGetExchange();
+  }, []);
+
+  useEffect(() => {
+    let num: number[] = [];
+    for (let index = 0; index < numOfPage; index++) {
+      num.push(index);
+    }
+    setPaginateNum(num);
+  }, [data]);
+
+  useEffect(() => {}, []);
+
   return (
     <div className="bg-black w-full min-h-screen px-4 py-8">
       <div className="border-b font-semibold text-2xl text-white">
         Dashboard
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-        {dashboardlist?.map((list, index) => (
+        {dashboardData?.map((list: DashboardlistType, index: number) => (
           <div
             key={index}
             className="flex flex-row justify-between items-center p-4 text-white bg-[#222121] rounded-md shadow-sm shadow-white "
@@ -47,9 +125,10 @@ const Dashboard = () => {
         ))}
       </div>
       <DashboardDetails
-        category={"Pending Withdrawal"}
-        header={!showSidebar ? headerText : smallHeaderText}
-        data={pendingwithdrawal}
+        category={"All Exchange"}
+        data={newData}
+        paginateNum={paginateNum}
+        setPageNum={setPageNum}
       />
     </div>
   );

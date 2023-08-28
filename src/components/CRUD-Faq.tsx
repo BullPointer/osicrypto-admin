@@ -1,11 +1,17 @@
 import Joi from "joi";
 import React, { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  createSearchParams,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import Input, { faqInputType } from "./utils/Input";
 import Select from "./utils/Select";
 import { createFaqApi, editByIdApi, getFaqByIdApi } from "../api/FaqApi";
 import { ErrorDisplayPage } from "./ErrorDisplayPage";
 import { faqListA, faqListB } from "./CRUD-Data";
+import { useEditorContext } from "../context/EditorContext";
 
 const CrudFaq = () => {
   const faqObject = {
@@ -14,8 +20,10 @@ const CrudFaq = () => {
     status: "true",
     answer: "",
   };
+  const { editorMsg, setEditorMsg } = useEditorContext();
   const [useParams] = useSearchParams();
   const navigate = useNavigate();
+  const { pathname, state } = useLocation();
   const id = useParams.get("id");
   const [faqMessage, setFaqMessage] = useState<string | null>(null);
   const [err, setErr] = useState<faqInputType | null>(null);
@@ -33,15 +41,28 @@ const CrudFaq = () => {
   const getBlogById = async () => {
     if (id) {
       const response = await getFaqByIdApi(id);
-      if (response.status == 200) {
+
+      if (response.status == 200 && !state) {
         setFaq({
           ...faq,
           question: response.data.data.question,
-          answer: response.data.data.answer,
           status: String(response.data.data.status),
           type: response.data.data.type,
+          answer: response.data.data.answer,
         });
       }
+      if (response.status == 200 && state) {
+        setFaq({
+          ...faq,
+          question: response.data.data.question,
+          status: String(response.data.data.status),
+          type: response.data.data.type,
+          answer: editorMsg,
+        });
+      }
+    } else {
+      setFaq({ ...faq, answer: editorMsg });
+      // setEditorMsg("");
     }
   };
 
@@ -61,9 +82,26 @@ const CrudFaq = () => {
     setFaq({ ...faq, [name]: value });
   };
 
+  const handleWrite = async () => {
+    if (id) {
+      setEditorMsg(faq.answer);
+      navigate(
+        {
+          pathname: "/admin/editor",
+          search: createSearchParams({ id: id }).toString(),
+        },
+        { state: { path: pathname } }
+      );
+    } else {
+      navigate("/admin/editor", {
+        state: { path: pathname },
+      });
+    }
+  };
+
   const handleSubmit = async (e: Event | React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     const errors: any = {};
     const { error } = schema.validate(faq, { abortEarly: false });
     if (error) {
@@ -178,22 +216,19 @@ const CrudFaq = () => {
           name={"status"}
           value={faq.status}
         />
-
-        <div className="flex flex-col justify-start items-start w-full">
-          <label
-            className="text-white pt-5 font-semibold font-mono text-xl"
-            htmlFor=""
-          >
-            Give answer
-          </label>
-          <textarea
-            onChange={handleChange}
-            value={faq["answer"]}
-            name="answer"
-            className="outline-none resize-none w-[100%] lg:w-[50%] bg-transparent border-b-2"
-          ></textarea>
-          {err?.answer && (
-            <div className="text-sm text-red-400">{err.answer}</div>
+        <div className="py-4 ">
+          {(id && faq.answer !== "") || (!id && faq.answer !== "") ? (
+            <div
+              onClick={handleWrite}
+              className="cursor-pointer bg-blue-800 w-[100%] lg:w-[50%] py-2 px-3 font-bold text-center rounded-md"
+            >
+              {id ? <span>Edit FAQs</span> : <span>Write FAQs</span>}
+            </div>
+          ) : (
+            <div className="cursor-pointer bg-blue-800 w-[100%] lg:w-[50%] py-2 px-3 font-bold text-center rounded-md">
+              {" "}
+              Loading...
+            </div>
           )}
         </div>
         <button

@@ -30,3 +30,18 @@ export const signupApi = async (cred: SignupCred) => {
     }
   );
 };
+
+export const visitorsApi = async () => {
+  const response = await axios.get("http://localhost:3000/api/visitors/get");
+  return response;
+};
+
+export const workersApi = async () => {
+  const response = await axios.get("http://localhost:3000/admin-panel/users");
+  return response;
+};
+
+export const usersApi = async () => {
+  const response = await axios.get("http://localhost:3000/users");
+  return response;
+};
