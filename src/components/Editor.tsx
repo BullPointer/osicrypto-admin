@@ -87,7 +87,7 @@ const MenuBar = ({ setDesc }: any) => {
   );
 };
 
-const extensions = [
+const extensions:any = [
   Document,
   Paragraph,
   Text,
@@ -113,7 +113,6 @@ const extensions = [
     },
   }),
 ];
-console.log(extensions);
 
 const Editor = () => {
   const content = "";
