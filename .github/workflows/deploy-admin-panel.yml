@@ -29,4 +29,3 @@ jobs:
           # server-dir: /
           local-dir: ./dist/
           dangerous-clean-slate: true
- 
