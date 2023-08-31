@@ -9,7 +9,7 @@ type SidebarProps = {
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 };
 const Sidebar = ({ showSidebar, setShowSidebar }: SidebarProps) => {
-  const [showList, setShowList] = useState(false);
+  const [listIndex, setListIndex] = useState<number | null>(null);
 
   return (
     <div
@@ -18,7 +18,7 @@ const Sidebar = ({ showSidebar, setShowSidebar }: SidebarProps) => {
       } h-screen bg-[#1d1c1c]   absolute top-0 left-0 lg:static`}
     >
       <Scrollbars
-        style={{ width: "100%", height: "100%" }}
+        style={{ width: "100%", height: "100%", paddingTop: "3px" }}
         renderThumbVertical={(props) => (
           <div
             {...props}
@@ -61,7 +61,10 @@ const Sidebar = ({ showSidebar, setShowSidebar }: SidebarProps) => {
                   }
                 >
                   <div
-                    onClick={() => setShowList(!showList)}
+                    onClick={() => {
+                      
+                      setListIndex(listIndex === index ? null : index);
+                    }}
                     className="w-full flex flex-row justify-between items-center pr-5"
                   >
                     <div className="w-full flex flex-row justify-start items-center cursor-pointer hover:bg-[#473131] p-4 gap-2">
@@ -71,16 +74,17 @@ const Sidebar = ({ showSidebar, setShowSidebar }: SidebarProps) => {
                       <div className="text-[#b9b7b7] text-[15px]">{text}</div>
                     </div>
                     <div className="text-[#e6e4e4]">
-                      {showList ? (
+                      {listIndex === index ? (
                         <Icon icon="ep:arrow-up-bold" fontSize={20} />
                       ) : (
                         <Icon icon="ep:arrow-down-bold" fontSize={20} />
                       )}
                     </div>
                   </div>
-                  {sub && showList  &&
-                    sub.map(({ logo, text, link }, index) => (
+                  {listIndex === index &&
+                    sub?.map(({ logo, text, link }, index) => (
                       <Link
+                        key={index}
                         className="flex flex-row justify-start items-center cursor-pointer hover:bg-[#473131] pl-8 py-4 gap-2"
                         onClick={() =>
                           window.innerWidth <= 640 &&

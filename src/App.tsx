@@ -1,4 +1,4 @@
-import "./init.tsx"; 
+import "./init.tsx";
 import { Route, Routes } from "react-router-dom";
 import { AdminPanel, Dashboard } from "./components";
 import Blog from "./components/Blog";
@@ -8,7 +8,7 @@ import Faqs from "./components/Faqs";
 import Login from "./components/Login";
 import { NotfoundPage } from "./components/NotfoundPage";
 import { RequireAuth } from "./utils/RequireAuth";
-import Editor from "./components/Editor";
+import CrudEditor from "./components/CRUD-Editor";
 import Workers from "./components/Worker";
 import AllWorkers from "./components/workers/AllWorkers";
 import CreateWorkers from "./components/workers/CreateWorkers";
@@ -17,6 +17,9 @@ import DeletedWorkers from "./components/workers/DeletedWorkers";
 import DeleteRequests from "./components/workers/DeleteRequests";
 import EmailPending from "./components/workers/EmailPending";
 import PendingPhoneVerify from "./components/workers/PendingPhoneVerify";
+import PrivacyPolicy from "./components/Documents/PrivacyPolicy.js";
+import TermsAndConditions from "./components/Documents/TermsAndConditions.js";
+import Document from "./components/Documents/Document.js";
 
 const App = () => {
   return (
@@ -36,6 +39,9 @@ const App = () => {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="faq" element={<Faqs />} />
         <Route path="blog" element={<Blog />} />
+        <Route path="documents" element={<Document />} />
+        <Route path="privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="terms-and-conditions" element={<TermsAndConditions />} />
         <Route path="worker" element={<Workers />}>
           <Route index element={<AllWorkers />} />
           <Route path="all-workers" element={<AllWorkers />} />
@@ -51,8 +57,8 @@ const App = () => {
         <Route path="faq/create-faq" element={<CrudFaq />} />
         <Route path="faq/edit" element={<CrudFaq />} />
 
-        <Route path="editor" element={<Editor />} />
-        <Route path="editor/:editPath" element={<Editor />} />
+        <Route path="editor" element={<CrudEditor />} />
+        <Route path="editor/:editPath" element={<CrudEditor />} />
       </Route>
     </Routes>
   );

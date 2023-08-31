@@ -56,3 +56,30 @@ export const faqListB = [
         value: "false",
     },
 ]
+
+export const listArr = [
+    {
+      option: "Latest News",
+      value: "Latest News",
+    },
+    {
+      option: "For You",
+      value: "For You",
+    },
+    {
+      option: "Price Predictions",
+      value: "Price Predictions",
+    },
+    {
+      option: "Crypto Updates",
+      value: "Crypto Updates",
+    },
+    {
+      option: "Trending News",
+      value: "Trending News",
+    },
+    {
+      option: "Top Stories",
+      value: "Top Stories",
+    },
+  ]

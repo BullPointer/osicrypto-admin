@@ -105,6 +105,12 @@ export const sidebarlist = [
         sub: null,
     },
     {
+        logo: "uiw:document",
+        text: "Documents",
+        link: "documents",
+        sub: null,
+    },
+    {
         logo: "mdi:faq",
         text: "FAQs",
         link: "faq",

@@ -11,7 +11,8 @@ import BlogImage from "./utils/BlogImage";
 import Input, { blogInputType } from "./utils/Input";
 import Select from "./utils/Select";
 import { ErrorDisplayPage } from "./ErrorDisplayPage";
-import { useEditorContext } from "../context/EditorContext";
+import Editor from "./CRUD-Editor";
+import { listArr } from "./CRUD-Data";
 
 const CrudBlog = () => {
   const blogObj = {
@@ -33,38 +34,19 @@ const CrudBlog = () => {
     ...blogObj,
     category: "Latest News",
   });
-  const { editorMsg, setEditorMsg } = useEditorContext();
 
   const getBlogById = async () => {
     if (id) {
       const response = await getBlogByIdApi(id);
-      if (response.status == 200 && !state) {
-        setBlog({
-          ...blog,
-          blogImage: `http://localhost:3000/${response.data.data.blogImage}`,
-          category: response.data.data.category,
-          title: response.data.data.title,
-          subtitle: response.data.data.subtitle,
-          author: response.data.data.author,
-          notes: response.data.data.notes,
-        });
-      }
-      if (response.status == 200 && state) {
-        setBlog({
-          ...blog,
-          blogImage: `http://localhost:3000/${response.data.data.blogImage}`,
-          category: response.data.data.category,
-          title: response.data.data.title,
-          subtitle: response.data.data.subtitle,
-          author: response.data.data.author,
-          notes: editorMsg,
-        });
-        console.log("come back state is ", blog.notes);
-      }
-    } else {
-      setBlog({ ...blog, notes: editorMsg });
-      // setEditorMsg("");
-      console.log("Just checking", blog.notes, editorMsg);
+      setBlog({
+        ...blog,
+        blogImage: `http://localhost:3000/${response.data.data.blogImage}`,
+        category: response.data.data.category,
+        title: response.data.data.title,
+        subtitle: response.data.data.subtitle,
+        author: response.data.data.author,
+        notes: response.data.data.notes,
+      });
     }
   };
 
@@ -95,21 +77,6 @@ const CrudBlog = () => {
       >) => {
     const { name, value } = target as HTMLInputElement | HTMLTextAreaElement;
     setBlog({ ...blog, [name]: value });
-  };
-
-  const handleWrite = async () => {
-    if (id) {
-      setEditorMsg(blog.notes);
-      navigate(
-        {
-          pathname: "/admin/editor",
-          search: createSearchParams({ id: id }).toString(),
-        },
-        { state: { path: pathname } }
-      );
-    } else {
-      navigate("/admin/editor", { state: { path: pathname } });
-    }
   };
 
   const handleSubmit = async (e: Event | React.FormEvent<HTMLFormElement>) => {
@@ -208,32 +175,7 @@ const CrudBlog = () => {
         <BlogImage setBlog={setBlog} blog={blog} />
         <Select
           handleChange={handleChange}
-          listArr={[
-            {
-              option: "Latest News",
-              value: "Latest News",
-            },
-            {
-              option: "For You",
-              value: "For You",
-            },
-            {
-              option: "Price Predictions",
-              value: "Price Predictions",
-            },
-            {
-              option: "Crypto Updates",
-              value: "Crypto Updates",
-            },
-            {
-              option: "Trending News",
-              value: "Trending News",
-            },
-            {
-              option: "Top Stories",
-              value: "Top Stories",
-            },
-          ]}
+          listArr={listArr}
           label={"Category"}
           name={"category"}
         />
@@ -265,44 +207,13 @@ const CrudBlog = () => {
         {err?.author && (
           <div className="text-sm text-red-400">{err.author}</div>
         )}
-        {/* <Select
-          handleChange={handleChange}
-          listArr={[
-            {
-              option: "Active",
-              value: true,
-            },
-            {
-              option: "Deactive",
-              value: false,
-            },
-          ]}
-          label={"Activation Status"}
-          name={"status"}
+        <Editor
+          setDesc={setBlog}
+          items={blog}
+          name={"notes"}
+          id={id}
+          value={blog.notes}
         />
-        {err?.author && (
-          <div className="text-sm text-red-400">{err.author}</div>
-        )} */}
-
-        <div className="py-4 ">
-          {(id && blog.notes !== "") || (!id && blog.notes !== "") ? (
-            <div
-              onClick={handleWrite}
-              className="cursor-pointer bg-blue-800 w-[100%] lg:w-[50%] py-2 px-3 font-bold text-center rounded-md"
-            >
-              {id ? (
-                <span>Edit Blog/Article</span>
-              ) : (
-                <span>Write Blog/Article</span>
-              )}
-            </div>
-          ) : (
-            <div className="cursor-pointer bg-blue-800 w-[100%] lg:w-[50%] py-2 px-3 font-bold text-center rounded-md">
-              {" "}
-              Loading...
-            </div>
-          )}
-        </div>
         <button
           className="bg-[#e7353511] hover:bg-blue-800 px-8 py-1 sm:py-2 rounded-lg my-2 font-bold text-[15px] sm:text-lg"
           type="submit"
