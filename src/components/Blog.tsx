@@ -42,7 +42,7 @@ const Blog = () => {
     { text: "Updated At", width: "w-[200px]" },
     { text: "Actions", width: "w-[200px]" },
   ];
-  return (
+  return ( 
     <div className=" bg-black w-full min-h-screen px-4 py-8">
       <div className="flex flex-row justify-between items-center border-b">
         <div className=" font-semibold text-2xl text-white my-2 text-[12px] sm:text-[16px]">
