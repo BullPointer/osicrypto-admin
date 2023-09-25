@@ -73,7 +73,7 @@ const SeeSupport = () => {
           setReply({ ...reply, status: data.data.status });
           setChats(data.data);
         } catch (error: any) {
-          console.log("New Error is ", error.response);
+          console.log("New Error is", error.response);
         }
       };
       getChats();
