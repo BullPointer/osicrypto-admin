@@ -3,7 +3,7 @@
   padding: 0;
 }
 
-body { 
+body {
   margin: 0;
   padding: 0;
 }
@@ -11,6 +11,7 @@ body {
 .wrap-word {
   word-wrap: break-word;
   overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .random-color {

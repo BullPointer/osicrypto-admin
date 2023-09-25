@@ -1,3 +1,23 @@
+export type messageTypes = {
+    createdAt: string;
+    fileImage: string;
+    fromAdmin: string;
+    msg: string;
+    room: string;
+    username: string;
+    _id: string;
+};
+
+export type chatsTypes = {
+    category: string;
+    createdDate: string;
+    messages: messageTypes[];
+    priority: string;
+    status: string;
+    subject: string;
+    _id: string;
+};
+
 export type dashboardType = {
     sender: string,
     receiver: string,

@@ -2,14 +2,20 @@ import axios from "axios";
 
 export const getAll = async () => {
   const response = await axios.get(
-    "http://localhost:3000/api/term-and-condition"
+    "https://osicrypto-backend.onrender.com/api/term-and-condition"
   );
+  // const response = await axios.get(
+  //   "http://localhost:3000/api/term-and-condition"
+  // );
   return response;
 };
 export const getByIdApi = async (id: string) => {
   const response = await axios.get(
-    `http://localhost:3000/api/term-and-condition/${id}`
+    `https://osicrypto-backend.onrender.com/api/term-and-condition/${id}`
   );
+  // const response = await axios.get(
+  //   `http://localhost:3000/api/term-and-condition/${id}`
+  // );
   return response;
 };
 
@@ -32,10 +38,15 @@ export const editOrCreate = async (cred: any, id: string) => {
   };
 
   const response: any = await axios.patch(
-    `http://localhost:3000/api/term-and-condition/?id=${id}`,
+    `https://osicrypto-backend.onrender.com/api/term-and-condition/?id=${id}`,
     JSON.stringify(cred),
     config
   );
+  // const response: any = await axios.patch(
+  //   `http://localhost:3000/api/term-and-condition/?id=${id}`,
+  //   JSON.stringify(cred),
+  //   config
+  // );
 
   return response;
 };
@@ -49,8 +60,12 @@ export const deleteByIdApi = async (id: string) => {
   };
 
   const response = await axios.delete(
-    `http://localhost:3000/api/term-and-condition/${id}`,
+    `https://osicrypto-backend.onrender.com/api/term-and-condition/${id}`,
     config
   );
+  // const response = await axios.delete(
+  //   `http://localhost:3000/api/term-and-condition/${id}`,
+  //   config
+  // );
   return response;
 };

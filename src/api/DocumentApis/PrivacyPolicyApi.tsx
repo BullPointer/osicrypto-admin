@@ -2,13 +2,19 @@ import axios from "axios";
 import { faqInputType } from "../../components/utils/Input";
 
 export const getAll = async () => {
-  const response = await axios.get("http://localhost:3000/api/privacy-policy");
+  const response = await axios.get(
+    "https://osicrypto-backend.onrender.com/api/privacy-policy"
+  );
+  // const response = await axios.get("http://localhost:3000/api/privacy-policy");
   return response;
 };
 export const getByIdApi = async (id: string) => {
   const response = await axios.get(
-    `http://localhost:3000/api/privacy-policy/${id}`
+    `https://osicrypto-backend.onrender.com/api/privacy-policy/${id}`
   );
+  // const response = await axios.get(
+  //   `http://localhost:3000/api/privacy-policy/${id}`
+  // );
   return response;
 };
 
@@ -31,10 +37,15 @@ export const editOrCreate = async (cred: any, id: string) => {
   };
 
   const response: any = await axios.patch(
-    `http://localhost:3000/api/privacy-policy/?id=${id}`,
+    `https://osicrypto-backend.onrender.com/api/privacy-policy/?id=${id}`,
     JSON.stringify(cred),
     config
   );
+  // const response: any = await axios.patch(
+  //   `http://localhost:3000/api/privacy-policy/?id=${id}`,
+  //   JSON.stringify(cred),
+  //   config
+  // );
 
   return response;
 };
@@ -48,8 +59,12 @@ export const deleteByIdApi = async (id: string) => {
   };
 
   const response = await axios.delete(
-    `http://localhost:3000/api/privacy-policy/${id}`,
+    `https://osicrypto-backend.onrender.com/api/privacy-policy/${id}`,
     config
   );
+  // const response = await axios.delete(
+  //   `http://localhost:3000/api/privacy-policy/${id}`,
+  //   config
+  // );
   return response;
 };

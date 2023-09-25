@@ -117,6 +117,12 @@ export const sidebarlist = [
         sub: null,
     },
     {
+        logo: "ic:twotone-contact-support",
+        text: "Support Requests",
+        link: "support-requests",
+        sub: null,
+    },
+    {
         logo: "logo",
         text: "Coin",
         link: "editor",

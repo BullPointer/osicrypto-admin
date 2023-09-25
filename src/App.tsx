@@ -20,6 +20,8 @@ import PendingPhoneVerify from "./components/workers/PendingPhoneVerify";
 import PrivacyPolicy from "./components/Documents/PrivacyPolicy.js";
 import TermsAndConditions from "./components/Documents/TermsAndConditions.js";
 import Document from "./components/Documents/Document.js";
+import Support from "./components/Documents/Support.js";
+import SeeSupport from "./components/Documents/SeeSupport.js";
 
 const App = () => {
   return (
@@ -52,6 +54,22 @@ const App = () => {
           <Route path="email-pending" element={<EmailPending />} />
           <Route path="pending-phone-verify" element={<PendingPhoneVerify />} />
         </Route>
+        <Route
+          path="support-requests"
+          element={
+            <RequireAuth>
+              <Support />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="support-requests/:id"
+          element={
+            <RequireAuth>
+              <SeeSupport />
+            </RequireAuth>
+          }
+        />
         <Route path="blog/create-blog" element={<CrudBlog />} />
         <Route path="blog/edit" element={<CrudBlog />} />
         <Route path="faq/create-faq" element={<CrudFaq />} />
