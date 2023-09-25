@@ -120,7 +120,7 @@ const Login = () => {
               onChange={handleChange}
               label="Password"
               name="password"
-              type="text"
+              type="password"
               objectValue={user}
             />
             {err?.password && (
