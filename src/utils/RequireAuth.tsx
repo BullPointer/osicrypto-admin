@@ -7,7 +7,7 @@ type ProtectedRouteProps = {
 export const RequireAuth = ({ children }: ProtectedRouteProps) => {
   const location = useLocation();
   const date = new Date();
-  const storedData = sessionStorage.getItem("token");
+  const storedData = localStorage.getItem("token");
 
   if (storedData) {
     const parsedData = JSON.parse(storedData);
