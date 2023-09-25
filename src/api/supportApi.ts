@@ -20,7 +20,7 @@ export const getSupportsApi = async () => {
     },
   };
   const response = await axios.get(
-    "https://osicrypto-backend.onrender.com/api/supports",
+    "https://osicrypto-backend.onrender.com/api/supports/get-all",
     config
   );
   // const response = await axios.get(
