@@ -15,7 +15,7 @@ export const getBlogByIdApi = async (id: string) => {
   // const response = await axios.get(`http://localhost:3000/api/blogs/${id}`);
   return response;
 };
-const storedData = sessionStorage.getItem("token");
+const storedData = localStorage.getItem("token");
 
 const useToken = () => {
   if (storedData) {

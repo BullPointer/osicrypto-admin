@@ -3,7 +3,7 @@ import axios from "axios";
 import { getSupportByIdApi } from "./supportApi";
 
 const useToken = () => {
-  const storedData = sessionStorage.getItem("token");
+  const storedData = localStorage.getItem("token");
   if (storedData) {
     const token = JSON.parse(storedData).data;
     return token;

@@ -18,7 +18,7 @@ export const getByIdApi = async (id: string) => {
   return response;
 };
 
-const storedData = sessionStorage.getItem("token");
+const storedData = localStorage.getItem("token");
 
 const useToken = () => {
   if (storedData) {

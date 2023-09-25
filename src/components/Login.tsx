@@ -61,14 +61,14 @@ const Login = () => {
           data: response.data.token,
         };
         setErr(null);
-        sessionStorage.setItem("token", JSON.stringify(dataToStore));
+        localStorage.setItem("token", JSON.stringify(dataToStore));
         navigate(locationPath, { replace: true });
       }
     } catch (error: any) {
       console.log(error);
 
       setErr({
-        email: (error.response?.data.message || error.message),
+        email: error.response?.data.message || error.message,
       } as userInputType);
     }
   };
@@ -102,7 +102,9 @@ const Login = () => {
           >
             <div className="w-full">
               <div className="text-xl sm:text-3xl font-bold">Sign In</div>
-              <div className="text-[12px] sm:text-[16px] font-bold">Please Sign In To Your Account</div>
+              <div className="text-[12px] sm:text-[16px] font-bold">
+                Please Sign In To Your Account
+              </div>
             </div>
             <Input
               onChange={handleChange}

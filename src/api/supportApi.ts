@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import axios from "axios";
 
-const storedData = sessionStorage.getItem("token");
+const storedData = localStorage.getItem("token");
 
 const useToken = () => {
   if (storedData) {
