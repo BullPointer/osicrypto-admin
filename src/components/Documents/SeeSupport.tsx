@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
+import parser from "html-react-parser";
 import { Link, useParams } from "react-router-dom";
 import ReplySeeSupport from "./ReplySeeSupport";
 import Joi from "joi";
@@ -13,9 +14,9 @@ type errorType = { file: string; response: string };
 
 const SeeSupport = () => {
   const [imgName, setImgName] = useState("");
+  const [editorValue, setEditorValue] = useState("");
   const [err, setErr] = useState({} as errorType);
   const [reply, setReply] = useState({
-    response: "",
     file: "",
     status: "PENDING",
   });
@@ -26,7 +27,6 @@ const SeeSupport = () => {
   const schema = Joi.object({
     file: Joi.any().allow("").optional(),
     status: Joi.string().min(3),
-    response: Joi.string().min(5).allow("").optional(),
   });
 
   const handleChange = ({
@@ -56,7 +56,7 @@ const SeeSupport = () => {
     } else {
       setErr({} as errorType);
       try {
-        await createChatApi(reply, chats._id);
+        await createChatApi({ ...reply, response: editorValue }, chats._id);
         setSendMsg("true");
       } catch (error: any) {
         console.log("New Error: ", error.response);
@@ -149,7 +149,7 @@ const SeeSupport = () => {
                     {fromAdmin ? "Admin Message" : username}
                   </div>
                 </div>
-                <p className="text-[14px]">{msg}</p>
+                <p className="text-[14px]">{parser(msg)}</p>
               </div>
             )
           )}
@@ -165,6 +165,8 @@ const SeeSupport = () => {
           imgName={imgName}
           handleChange={handleChange}
           err={err}
+          setValue={setEditorValue}
+          value={editorValue}
         />
         <div className="flex flex-row justify-center items-center gap-3 px-2 py-5">
           <Link

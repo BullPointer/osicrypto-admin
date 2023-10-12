@@ -1,17 +1,19 @@
 export type userInputType = { email: string; password: string };
+
 export type blogInputType = {
-  blogImage: any,
-  category: string,
-  title: string,
-  subtitle: string,
-  author: string,
-  notes: string,
+  blogImage: any;
+  category: string;
+  title: string;
+  subtitle: string;
+  author: string;
+  notes?: string;
 };
+
 export type faqInputType = {
-  question: string,
-  type: string,
-  status: string,
-  answer: string,
+  question: string;
+  type: string;
+  status: string;
+  answer?: string;
 };
 
 type InputProps = {

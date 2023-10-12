@@ -7,26 +7,27 @@ import { createFaqApi, editByIdApi, getFaqByIdApi } from "../api/FaqApi";
 import { ErrorDisplayPage } from "./ErrorDisplayPage";
 import { faqListA, faqListB } from "./CRUD-Data";
 import Editor from "./CRUD-Editor";
+import QuillEditor from "./Quill-Editor";
 
 const CrudFaq = () => {
   const faqObject = {
     question: "",
     type: "",
     status: "true",
-    answer: "",
   };
+
   const [useParams] = useSearchParams();
   const navigate = useNavigate();
   const id = useParams.get("id");
   const [faqMessage, setFaqMessage] = useState<string | null>(null);
   const [err, setErr] = useState<faqInputType | null>(null);
+  const [editorValue, setEditorValue] = useState("");
   const [faq, setFaq] = useState({
     ...faqObject,
     type: "Main",
   });
   const schema = Joi.object({
     question: Joi.string(),
-    answer: Joi.string(),
     status: Joi.string(),
     type: Joi.string(),
   });
@@ -40,8 +41,9 @@ const CrudFaq = () => {
         question: response.data.data.question,
         status: String(response.data.data.status),
         type: response.data.data.type,
-        answer: response.data.data.answer,
       });
+      setEditorValue(response.data.data.answer);
+      console.log(response.data.data.answer);
     }
   };
 
@@ -87,14 +89,18 @@ const CrudFaq = () => {
         let editedBlog: any = [];
         for (const key in faq) {
           if (faq.hasOwnProperty(key) && compareObj.hasOwnProperty(key)) {
+            const reqObj: any = {};
+
             if (
-              faq[key as keyof faqInputType] !==
+              faq[key as keyof typeof faq] !==
               compareObj[key as keyof faqInputType]
             ) {
-              const reqObj: any = {};
-
               reqObj["key"] = key;
-              reqObj["value"] = faq[key as keyof faqInputType];
+              reqObj["value"] = faq[key as keyof typeof faq];
+              editedBlog.push(reqObj);
+            } else if (editorValue !== compareObj.answer) {
+              reqObj["key"] = "answer";
+              reqObj["value"] = editorValue;
               editedBlog.push(reqObj);
             }
           }
@@ -122,7 +128,7 @@ const CrudFaq = () => {
       }
     } else {
       try {
-        await createFaqApi(faq);
+        await createFaqApi({ ...faq, answer: editorValue });
 
         setErr(null);
         setFaqMessage("FaQ published sucessfully!");
@@ -178,13 +184,8 @@ const CrudFaq = () => {
           name={"status"}
           value={faq.status}
         />
-        <Editor
-          setDesc={setFaq}
-          items={faq}
-          name={"answer"}
-          id={id}
-          value={faq.answer}
-        />
+        <QuillEditor value={editorValue} setValue={setEditorValue} />
+
         <button
           className="bg-[#e7353511] hover:bg-blue-800 px-8 py-1 sm:py-2 rounded-lg my-2 font-bold text-[15px] sm:text-lg"
           type="submit"

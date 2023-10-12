@@ -1,4 +1,7 @@
 /* eslint-disable react/prop-types */
+import { useState } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 type ReplySeeSupportPropTypes = {
   imgName: string;
@@ -6,12 +9,16 @@ type ReplySeeSupportPropTypes = {
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => void;
   err: { file: string; response: string };
+  value: string;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const ReplySeeSupport = ({
   imgName,
   handleChange,
   err,
+  value,
+  setValue,
 }: ReplySeeSupportPropTypes) => {
   return (
     <div className="px-10">
@@ -19,16 +26,13 @@ const ReplySeeSupport = ({
         <div className="w-full font-bold text-[12px] text-[#302d2d]">
           Response <span className="text-red-500">*</span>
         </div>
-        <textarea
+        <ReactQuill
+          className="w-full min-h-[180px] text-[12px] text-[#3b3939] font-normal rounded-md outline-none focus:border border-[#515979] bg-[#ececf0]"
+          theme="snow"
+          value={value}
           placeholder="Enter your reply message here..."
-          onChange={handleChange}
-          className="w-full h-28 p-2 text-[12px] text-[#3b3939] font-normal rounded-md outline-none focus:border border-[#515979] bg-[#ececf0]"
-          name="response"
-          id=""
+          onChange={setValue}
         />
-        {err?.response && (
-          <div className="text-red-500 text-[9px]">{err.response}</div>
-        )}
       </div>
       <div className="">
         <div className="w-full font-bold text-[12px] text-[#302d2d]">

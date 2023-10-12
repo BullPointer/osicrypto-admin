@@ -11,8 +11,8 @@ import BlogImage from "./utils/BlogImage";
 import Input, { blogInputType } from "./utils/Input";
 import Select from "./utils/Select";
 import { ErrorDisplayPage } from "./ErrorDisplayPage";
-import Editor from "./CRUD-Editor";
 import { listArr } from "./CRUD-Data";
+import QuillEditor from "./Quill-Editor";
 
 const CrudBlog = () => {
   const blogObj = {
@@ -21,15 +21,15 @@ const CrudBlog = () => {
     title: "",
     subtitle: "",
     author: "",
-    notes: "",
   };
 
   const [useParams] = useSearchParams();
   const id = useParams.get("id");
   const { pathname, state } = useLocation();
+  const navigate = useNavigate();
   const [err, setErr] = useState<blogInputType | null>(blogObj);
   const [blogMessage, setBlogMessage] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const [editorValue, setEditorValue] = useState("");
   const [blog, setBlog] = useState<blogInputType>({
     ...blogObj,
     category: "Latest News",
@@ -45,18 +45,13 @@ const CrudBlog = () => {
         title: response.data.data.title,
         subtitle: response.data.data.subtitle,
         author: response.data.data.author,
-        notes: response.data.data.notes,
       });
+      setEditorValue(response.data.data.notes);
     }
   };
 
   useEffect(() => {
     getBlogById();
-  }, []);
-  useEffect(() => {
-    if (blogMessage) {
-      console.log("I think it is true now ");
-    }
   }, []);
 
   const schema = Joi.object({
@@ -65,7 +60,6 @@ const CrudBlog = () => {
     title: Joi.string(),
     subtitle: Joi.string(),
     author: Joi.string(),
-    notes: Joi.string().min(10),
   });
 
   const handleChange = ({
@@ -112,6 +106,8 @@ const CrudBlog = () => {
             ) {
               editedBlog[key as keyof blogInputType] =
                 blog[key as keyof blogInputType];
+            } else if (editorValue !== compareObj.notes) {
+              editedBlog["notes"] = editorValue;
             }
           }
         }
@@ -135,7 +131,7 @@ const CrudBlog = () => {
       }
     } else {
       try {
-        await createBlogApi(blog);
+        await createBlogApi({ ...blog, notes: editorValue });
 
         setErr(null);
         setBlogMessage("Blog published sucessfully!");
@@ -207,13 +203,7 @@ const CrudBlog = () => {
         {err?.author && (
           <div className="text-sm text-red-400">{err.author}</div>
         )}
-        <Editor
-          setDesc={setBlog}
-          items={blog}
-          name={"notes"}
-          id={id}
-          value={blog.notes}
-        />
+        <QuillEditor value={editorValue} setValue={setEditorValue} />
         <button
           className="bg-[#e7353511] hover:bg-blue-800 px-8 py-1 sm:py-2 rounded-lg my-2 font-bold text-[15px] sm:text-lg"
           type="submit"

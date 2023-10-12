@@ -29,7 +29,7 @@ export const createBlogApi = async (cred: blogInputType) => {
   const formData = new FormData();
   formData.append("title", cred.title);
   formData.append("subtitle", cred.subtitle);
-  formData.append("notes", cred.notes);
+  cred.notes && formData.append("notes", cred.notes);
   formData.append("author", cred.author);
   formData.append("category", cred.category);
   formData.append("blogImage", cred.blogImage);
