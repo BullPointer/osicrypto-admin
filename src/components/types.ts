@@ -15,6 +15,7 @@ export type chatsTypes = {
     priority: string;
     status: string;
     subject: string;
+    email: string;
     _id: string;
 };
 

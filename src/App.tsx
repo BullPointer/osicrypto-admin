@@ -28,6 +28,7 @@ const App = () => {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="*" element={<NotfoundPage />} />
+      <Route path="not-found" element={<NotfoundPage />} />
 
       <Route
         path="/admin/"

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Icon } from "@iconify/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import parser from "html-react-parser";
 import { Link, useParams } from "react-router-dom";
 import ReplySeeSupport from "./ReplySeeSupport";
@@ -9,6 +9,8 @@ import { createChatApi } from "../../api/chatApi";
 import { getSupportByIdApi } from "../../api/supportApi";
 import { chatsTypes, messageTypes } from "../types";
 import SupportSelect from "../utils/SupportSelect";
+import { io } from "socket.io-client";
+import moment from "moment";
 
 type errorType = { file: string; response: string };
 
@@ -21,8 +23,11 @@ const SeeSupport = () => {
     status: "PENDING",
   });
   const [chats, setChats] = useState({} as chatsTypes);
-  const [sendMsg, setSendMsg] = useState("");
+  const [sentNewMsg, setSentNewMsg] = useState("");
+  const [socket, setSocket] = useState<any>(null);
+  const [onlineUsers, setOnlineUsers] = useState(null);
   const { id } = useParams();
+  const scroll = useRef<HTMLDivElement | null>(null);
 
   const schema = Joi.object({
     file: Joi.any().allow("").optional(),
@@ -57,7 +62,7 @@ const SeeSupport = () => {
       setErr({} as errorType);
       try {
         await createChatApi({ ...reply, response: editorValue }, chats._id);
-        setSendMsg("true");
+        setSentNewMsg(editorValue);
       } catch (error: any) {
         console.log("New Error: ", error.response);
       }
@@ -65,11 +70,16 @@ const SeeSupport = () => {
   };
 
   useEffect(() => {
+    scroll.current?.scrollIntoView({ behavior: "smooth" });
+    // scroll.current?.scrollIntoView);
+  }, [sentNewMsg]);
+
+  useEffect(() => {
     if (id) {
       const getChats = async () => {
         try {
           const { data } = await getSupportByIdApi(id);
-          console.log(data.data);
+
           setReply({ ...reply, status: data.data.status });
           setChats(data.data);
         } catch (error: any) {
@@ -78,7 +88,56 @@ const SeeSupport = () => {
       };
       getChats();
     }
-  }, [sendMsg]);
+  }, []);
+
+  // Connect to socket.io
+  useEffect(() => {
+    const { connect }: any = io;
+    const newSocket: any = connect("http://localhost:5050");
+    setSocket(newSocket);
+
+    return () => newSocket.disconnect();
+  }, []);
+
+  // add user to socket.io
+  useEffect(() => {
+    if (!socket) return;
+
+    if (Object.keys(chats).length > 0) {
+      socket.emit("addNewUser", `${chats?._id + chats?.email}`);
+      socket.on("getOnlineUsers", (res: any) => setOnlineUsers(res));
+    }
+
+    return () => socket.off("getOnlineUsers");
+  }, [socket, chats]);
+
+  // send message to the admin
+  useEffect(() => {
+    if (socket === null) return;
+
+    const newChats: any = {
+      ...reply,
+      msg: editorValue,
+      createdAt: new Date().toUTCString(),
+      fromAdmin: true,
+      email: chats?.email,
+      receiverId: chats?._id,
+    };
+    setChats((prev) => ({ ...prev, messages: [...prev.messages, newChats] }));
+
+    socket.emit("sendMessage", newChats);
+  }, [sentNewMsg]);
+
+  // recieve message from user
+  useEffect(() => {
+    if (socket === null) return;
+
+    socket.on("getMessage", (res: messageTypes) => {
+      setChats((prev) => ({ ...prev, messages: [...prev.messages, res] }));
+    });
+
+    return () => socket.off("getMessage");
+  }, [socket]);
 
   return (
     <div className="min-h-screen p-10">
@@ -132,6 +191,7 @@ const SeeSupport = () => {
               index: number
             ) => (
               <div
+                ref={scroll}
                 key={index}
                 className={`flex flex-col justify-center items-start gap-4 w-[70%] ${
                   !fromAdmin ? "self-start bg-[#fff]" : "self-end bg-[#f0ecec]"
@@ -143,7 +203,9 @@ const SeeSupport = () => {
                       className="text-[14px] md:text-[18px]"
                       icon="fluent-mdl2:date-time-12"
                     />
-                    <div className="text-[12px] font-semibold">{createdAt}</div>
+                    <div className="text-[12px] font-semibold">
+                      {moment(createdAt).calendar()}
+                    </div>
                   </div>
                   <div className="text-[12px] font-bold text-[#191942]">
                     {fromAdmin ? "Admin Message" : username}

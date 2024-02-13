@@ -10,11 +10,22 @@ type QuillEditorPropTypes = {
 };
 
 const QuillEditor = ({ value, setValue }: QuillEditorPropTypes) => {
-  // Quill.register("modules/resize", ResizeModule);
-  Quill.register("modules/imageResize", ImageResize);
+  Quill.register("modules/resize", ResizeModule);
+  // Quill.register("modules/imageResize", ImageResize);
 
   const modules = {
+    resize: {
+      locale: {
+        // change them depending on your language
+        altTip: "Hold down the alt key to zoom",
+        floatLeft: "Left",
+        floatRight: "Right",
+        center: "Center",
+        restore: "Restore",
+      },
+    },
     toolbar: [
+      [{ alingTools: false }],
       [{ header: [1, 2, 3, 4, 5, 6, false] }],
       [{ font: [] }],
       [{ size: [] }],
@@ -30,20 +41,10 @@ const QuillEditor = ({ value, setValue }: QuillEditorPropTypes) => {
       ["link", "image", "video"],
       ["clean"],
     ],
-    imageResize: {
-      parchment: Quill.import("parchment"),
-      modules: ["Resize", "DisplaySize", "Toolbar"],
-      displaySize: true,
-    },
-    // resize: {
-    //   locale: {
-    //     // change them depending on your language
-    //     altTip: "Hold down the alt key to zoom",
-    //     floatLeft: "Left",
-    //     floatRight: "Right",
-    //     center: "Center",
-    //     restore: "Restore",
-    //   },
+    // imageResize: {
+    //   parchment: Quill.import("parchment"),
+    //   modules: ["Resize", "DisplaySize", "Toolbar"],
+    //   displaySize: true,
     // },
   };
 

@@ -19,16 +19,17 @@ export const getSupportsApi = async () => {
       Authorization: `Bearer ${useToken()}`,
     },
   };
-  const response = await axios.get(
-    "https://osicrypto-backend.onrender.com/api/supports/get-all",
-    config
-  );
   // const response = await axios.get(
-  //   "http://localhost:3000/api/supports/get-all",
+  //   "https://osicrypto-backend.onrender.com/api/supports/get-all",
   //   config
   // );
+  const response = await axios.get(
+    "http://localhost:3000/api/supports/get-all",
+    config
+  );
   return response;
 };
+
 export const getSupportByIdApi = async (id: string) => {
   const config = {
     headers: {
@@ -36,14 +37,14 @@ export const getSupportByIdApi = async (id: string) => {
       Authorization: `Bearer ${useToken()}`,
     },
   };
-  const response = await axios.get(
-    `https://osicrypto-backend.onrender.com/api/supports/${id}`,
-    config
-  );
   // const response = await axios.get(
-  //   `http://localhost:3000/api/supports/${id}`,
+  //   `https://osicrypto-backend.onrender.com/api/supports/${id}`,
   //   config
   // );
+  const response = await axios.get(
+    `http://localhost:3000/api/supports/${id}`,
+    config
+  );
   return response;
 };
 
@@ -62,16 +63,17 @@ export const createSupportApi = async (cred: any) => {
     },
   };
 
-  const response = await axios.post(
-    "https://osicrypto-backend.onrender.com/api/supports",
-    formData,
-    config
-  );
   // const response = await axios.post(
-  //   "http://localhost:3000/api/supports",
+  //   "https://osicrypto-backend.onrender.com/api/supports",
   //   formData,
   //   config
   // );
+
+  const response = await axios.post(
+    "http://localhost:3000/api/supports",
+    formData,
+    config
+  );
 
   return response;
 };
@@ -84,13 +86,13 @@ export const deleteSupportByIdApi = async (id: string | null) => {
     },
   };
 
-  const response = await axios.delete(
-    `https://osicrypto-backend.onrender.com/api/supports/${id}`,
-    config
-  );
   // const response = await axios.delete(
-  //   `http://localhost:3000/api/supports/${id}`,
+  //   `https://osicrypto-backend.onrender.com/api/supports/${id}`,
   //   config
   // );
+  const response = await axios.delete(
+    `http://localhost:3000/api/supports/${id}`,
+    config
+  );
   return response;
 };
